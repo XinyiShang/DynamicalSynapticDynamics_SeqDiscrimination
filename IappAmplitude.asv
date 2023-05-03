@@ -1,0 +1,67 @@
+%W_e0_val = 50:5:100; %for the first set
+W_e0_val = 0:5:200;
+W_ee_max_val = 0:0.2:2; 
+W_ei_val = 0.665;
+W_ie_val = -540;
+Iapp_ratio = 0:0.5:5;
+NumIapp = length(Iapp_ratio);
+
+final_state = zeros(101, NumIapp, length(W_e0_val), length(W_ee_max_val));
+final_state_d = zeros(size(final_state));
+final_state_f = zeros(size(final_state));
+final_state_b = zeros(size(final_state));
+disp("Started Running");
+
+%addAttachedFiles(gcp, {'make_Iapp.m'});
+
+parfor j = 1:length(W_e0_val)
+    state_j = zeros(101, 64, length(W_ee_max_val));
+    state_j_d = zeros(size(state_j));
+    state_j_f = zeros(size(state_j));
+    state_j_b = zeros(size(state_j));
+
+    for k = 1:length(W_ee_max_val)
+        p = make_params("W_e0",W_e0_val(j),"W_ee_max",W_ee_max_val(k),"W_ei",W_ei_val,"W_ie",W_ie_val);
+        seq = generate_sequences(p,'permutations');
+        disp ("Iteration " + k);
+        for count = 1: NumIapp
+            [Iapp, on_time, off_time] = make_Iapp(p,seq(1,:));
+            Iapp = Iapp * Iapp_ratio(count);
+
+            [r, s] = run_network_noDepression(p,Iapp,'silent','yes');
+            Rank(i,j) = StateChangeAfterOffTime(r,off_time);
+
+            [r_d, s] = run_network(p,Iapp,'silent','yes');
+            state_j_d(:, count, k) = r_d(:, end);
+
+            [r_f, s] = run_network_onlyFacilitation(p,Iapp,'silent','yes');
+            state_j_f(:, count, k) = r_f(:, end);
+
+            [r_b, s] = run_network_facilitation(p,Iapp,'silent','yes');
+            state_j_b(:, count, k) = r_b(:, end);
+        end
+
+        disp(k)
+        thresh = 20;
+        state_j(:, :, k) = BinaryConvert(state_j(:, :, k),thresh);
+        state_j_d(:, :, k) = BinaryConvert(state_j_d(:, :, k),thresh);
+        state_j_f(:, :, k) = BinaryConvert(state_j_f(:, :, k),thresh);
+        state_j_b(:, :, k) = BinaryConvert(state_j_b(:, :, k),thresh);
+    end
+
+    disp ("End of k " + j)
+    final_state(:, :, j, :) = state_j;
+    final_state_d(:, :, j, :) = state_j_d;
+    final_state_f(:, :, j, :) = state_j_f;
+    final_state_b(:, :, j, :) = state_j_b;
+end
+
+%save('/content/drive/MyDrive/MyDataSave/num_types_6stimulus.mat','num_types');
+%save('/content/drive/MyDrive/MyDataSave/num_types_d_6stimulus.mat','num_types_d');
+%save('/content/drive/MyDrive/MyDataSave/num_types_f_6stimulus.mat','num_types_f');
+%save('/content/drive/MyDrive/MyDataSave/num_types_b_6stimulus.mat','num_types_b');
+
+save('MyDataSave\Mar16\final_state_6stimulus.mat','final_state');
+save('MyDataSave\Mar16\final_state_d_6stimulus.mat','final_state_d');
+save('MyDataSave\Mar16\final_state_f_6stimulus.mat','final_state_f');
+save('MyDataSave\Mar16\final_state_b_6stimulus.mat','final_state_b');
