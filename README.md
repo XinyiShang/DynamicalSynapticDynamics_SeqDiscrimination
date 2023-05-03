@@ -1,4 +1,4 @@
 # SynapticPlasticity_SeqDiscrimination
-The code for senior thesis: Synaptic Plasticity and its Effect on the Discrimination of Sequential Stimuli 
+The code for senior thesis: Dynamical Synaptic Strengths and its Effect on the Discrimination of Sequential Stimuli 
 
 #Coming soon
