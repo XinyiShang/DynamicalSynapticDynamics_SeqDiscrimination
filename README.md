@@ -1,5 +1,6 @@
 # SynapticPlasticity_SeqDiscrimination
-The code for senior thesis: Dynamical Synaptic Strengths and its Effect on the Discrimination of Sequential Stimuli 
+The code for senior thesis: Dynamical Synaptic Strengths and its Effect on the Discrimination of Sequential Stimuli
+https://drive.google.com/drive/folders/10KdwisU6CryydRTCXT71VGJFCMe4UaQ-?usp=drive_link
 
 Code are adapted and changed based on: Ballintyn, B., Shlaer, B., & Miller, P. (2019). Spatiotemporal discrimination in attractor networks 
 with short-term synaptic plasticity. Journal of Computational Neuroscience, 46(3), 279–
